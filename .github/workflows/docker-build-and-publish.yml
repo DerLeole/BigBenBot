@@ -30,7 +30,7 @@ jobs:
       - name: Build Docker image
         run: |
           IMAGE_NAME=leolele99/big-ben-discord-bot
-          GHCR_IMAGE=ghcr.io/${{ github.repository_owner }}/big-ben-discord-bot
+          GHCR_IMAGE=ghcr.io/derleole/big-ben-discord-bot
           TAG=${GITHUB_REF##*/}  # Extract the tag name (e.g., v1.0)
 
           # Build and tag for DockerHub
@@ -53,7 +53,7 @@ jobs:
       # Push Docker image to GHCR
       - name: Push Docker image to GitHub Container Registry
         run: |
-          GHCR_IMAGE=ghcr.io/${{ github.repository_owner }}/big-ben-discord-bot
+          GHCR_IMAGE=ghcr.io/derleole/big-ben-discord-bot
           TAG=${GITHUB_REF##*/}  # Extract the tag name (e.g., v1.0)
 
           docker push $GHCR_IMAGE:$TAG
