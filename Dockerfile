@@ -2,7 +2,7 @@
 FROM node:18-alpine AS build
 
 # Install Python and other dependencies (if necessary)
-RUN apk add --no-cache python3 py3-pip
+RUN apk add --no-cache python3 py3-pip make
 
 # Set working directory inside the container
 WORKDIR /usr/src/app
