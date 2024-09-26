@@ -1,0 +1,60 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    tags:
+      - 'v*'  # Triggers the workflow on version tags like v1.0, v2.1, etc.
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Log in to DockerHub
+      - name: Log in to DockerHub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      # Log in to GitHub Container Registry (GHCR)
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      # Set up Docker Buildx for multi-stage builds
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Build the Docker image
+      - name: Build Docker image
+        run: |
+          IMAGE_NAME=leolele99/big-ben-discord-bot
+          GHCR_IMAGE=ghcr.io/${{ github.repository_owner }}/big-ben-discord-bot
+          TAG=${GITHUB_REF##*/}  # Extract the tag name (e.g., v1.0)
+
+          # Build and tag for DockerHub
+          docker build -t $IMAGE_NAME:$TAG .
+          docker tag $IMAGE_NAME:$TAG $IMAGE_NAME:latest
+
+          # Tag the image for GHCR
+          docker tag $IMAGE_NAME:$TAG $GHCR_IMAGE:$TAG
+          docker tag $IMAGE_NAME:latest $GHCR_IMAGE:latest
+
+      # Push Docker image to DockerHub
+      - name: Push Docker image to DockerHub
+        run: |
+          IMAGE_NAME=leolele99/big-ben-discord-bot
+          TAG=${GITHUB_REF##*/}  # Extract the tag name (e.g., v1.0)
+          
+          docker push $IMAGE_NAME:$TAG
+          docker push $IMAGE_NAME:latest
+
+      # Push Docker image to GHCR
+      - name: Push Docker image to GitHub Container Registry
+        run: |
+          GHCR_IMAGE=ghcr.io/${{ github.repository_owner }}/big-ben-discord-bot
+          TAG=${GITHUB_REF##*/}  # Extract the tag name (e.g., v1.0)
+
+          docker push $GHCR_IMAGE:$TAG
+          docker push $GHCR_IMAGE:latest
