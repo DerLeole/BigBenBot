@@ -1,6 +1,9 @@
 # Stage 1: Build stage
 FROM node:18-alpine AS build
 
+# Install Python and other dependencies (if necessary)
+RUN apk add --no-cache python3 py3-pip
+
 # Set working directory inside the container
 WORKDIR /usr/src/app
 
@@ -16,6 +19,9 @@ COPY bell.mp3 ./
 
 # Stage 2: Production stage
 FROM node:18-alpine
+
+# Install Python in the final production image
+RUN apk add --no-cache python3
 
 # Set working directory for production container
 WORKDIR /usr/src/app
