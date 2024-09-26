@@ -1,3 +1,24 @@
+# Updated and Dockerized
+Updated to newest discord.js version and dockerized to work with docker compose.
+
+## Container registries
+You can find public docker images made from this repo on DockerHub and Github Container Registry.
+
+`ghcr.io/derleole/big-ben-discord-bot:latest`
+`leolele99/big-ben-discord-bot:latest`
+
+## Docker Compose Environment
+Use the docker compose `environment` section to specify everything that is usually in the .env file
+
+```
+-environment:
+  TOKEN: your token here
+  GUILD_ID: your guild id here
+  VOICE_CHANNEL_ID: voice channel id here
+  TEXT_CHANNEL_ID: text channel id here(this is opt leave it like this or delete it if you do not care about chat messages)
+  MATCH_DINGS_WITH_HOUR: false
+```
+
 # **Big Ben Bot** (as seen on tiktok @aaronr5)
 
 # **About**
