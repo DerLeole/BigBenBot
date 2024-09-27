@@ -37,8 +37,6 @@ const task = cron.schedule('0 0 */1 * * *', async () =>
 {
 	let { hour, amPm, timezoneOffsetString } = getTimeInfo();
 
-	console.log(`Playing Bong at ${hour}:00 ${amPm} GMT${timezoneOffsetString}`);
-
 	// if text channel was defined send message in chat
 	if (textChannel)
 	{
@@ -52,6 +50,7 @@ const task = cron.schedule('0 0 */1 * * *', async () =>
 	// check if VC defined in config is empty
 	if (voiceChannel.members.size >= 1)
 	{
+		console.log(`Playing Bong at ${hour}:00 ${amPm} GMT${timezoneOffsetString} to ${voiceChannel.members.size} members.`);
 		try
 		{
 			client.user.setPresence({ activities: [{ name: 'the Bongs', type: ActivityType.Playing }], status: 'online' });
