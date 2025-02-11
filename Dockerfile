@@ -2,7 +2,7 @@
 FROM node:18-alpine AS build
 
 # Install Python and other dependencies (if necessary)
-RUN apk add --no-cache alpine-sdk python3
+RUN apk add --no-cache alpine-sdk python3 libtool autoconf automake
 
 # Set working directory inside the container
 WORKDIR /usr/src/app
