@@ -3,7 +3,7 @@ const { joinVoiceChannel, createAudioPlayer, createAudioResource } = require('@d
 const { Client, GatewayIntentBits, Embed, ActivityType } = require('discord.js');
 const cron = require('node-cron');
 
-const { TOKEN, VOICE_CHANNEL_ID, GUILD_ID, TEXT_CHANNEL_ID, MATCH_DINGS_WITH_HOUR, FOLLOW_USER_ID } = process.env;
+const { TOKEN, VOICE_CHANNEL_ID, GUILD_ID, TEXT_CHANNEL_ID, MATCH_DINGS_WITH_HOUR, FOLLOW_USER_ID, FOLLOW_NAME, ORIGINAL_NAME } = process.env;
 
 const client = new Client({
     intents: [
@@ -28,6 +28,14 @@ client.on('ready', async () => {
     client.user.setPresence({ activities: [{ name: 'the hour', type: ActivityType.Watching }], status: 'idle' });
 });
 
+const changeIdentity = async (name) => {
+    try {
+        if (name) await client.user.setUsername(name);
+    } catch (error) {
+        console.log('Failed to change bot identity:', error);
+    }
+};
+
 const task = cron.schedule('0 0 */1 * * *', async () => {
     let { hour, amPm, timezoneOffsetString } = getTimeInfo();
 
@@ -39,6 +47,7 @@ const task = cron.schedule('0 0 */1 * * *', async () => {
     }
 
     let targetChannel = voiceChannel;
+    let following = false;
     
     if (voiceChannel.members.size === 0) {
         console.log('Original voice channel is empty, searching for FOLLOW_USER_ID...');
@@ -46,6 +55,8 @@ const task = cron.schedule('0 0 */1 * * *', async () => {
         if (followUser && followUser.voice.channel) {
             targetChannel = followUser.voice.channel;
             console.log(`Joining ${followUser.voice.channel.name} where FOLLOW_USER_ID is connected.`);
+            following = true;
+            await changeIdentity(FOLLOW_NAME);
         } else {
             console.log('FOLLOW_USER_ID not found in any voice channel.');
             return;
@@ -75,6 +86,9 @@ const task = cron.schedule('0 0 */1 * * *', async () => {
                     subscription.unsubscribe();
                     connection.destroy();
                     client.user.setPresence({ activities: [{ name: 'the hour', type: ActivityType.Watching }], status: 'idle' });
+                    if (following) {
+                        changeIdentity(ORIGINAL_NAME);
+                    }
                 }
             }
         });
